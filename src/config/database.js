@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
+import 'dotenv/config';
+
 
 export const connect = async () => {
-    await mongoose.connect('mongodb+srv://nodejslearner:qwert12345@cluster0.qbpknn0.mongodb.net/twitter');
+    await mongoose.connect(`${process.env.MONGO_URI}`);
 }

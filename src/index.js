@@ -23,13 +23,4 @@ app.listen(3000, async () => {
     console.log('server started');
     await connect();
     console.log('Mongo db connected');
-    const repo = new UserRepository();
-    const twetrepo = new TweetRepository();
-    const tweets = await twetrepo.getAll(0,10);
-    const user = await repo.getAll();
-    const likeService = new LikeService();
-    const userId = user[1].id; // Assuming you want the first user's ID
-    await likeService.toggleLike(tweets[0].id , 'Tweet' , userId);
-    console.log(tweets[0].id , 'Tweet' , userId);
-
 });

@@ -1,5 +1,6 @@
 import Hashtag from '../models/hashtags.js';
-class HashtagRepository { 
+class HashtagRepository {
+    
     async create(data) {
         try {
             const tag = await Hashtag.create(data);
@@ -8,6 +9,7 @@ class HashtagRepository {
             console.log(error);
         }
     }
+
     async bulkCreate(data) {
         try {
             const tags = await Hashtag.insertMany(data);
@@ -16,6 +18,7 @@ class HashtagRepository {
             console.log(error);
         }
     }
+
     async get(id) {
         try {
             const tag = await Hashtag.findById(id);
@@ -24,6 +27,7 @@ class HashtagRepository {
             console.log(error);
         }
     }
+
     async destroy(id) {
         try {
             const response = await Hashtag.findByIdAndRemove(id);
@@ -32,6 +36,7 @@ class HashtagRepository {
             console.log(error);
         }
     }
+
     async findByName(titleList) {
         try {
             const tags = await Hashtag.find({

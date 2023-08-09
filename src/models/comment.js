@@ -8,16 +8,16 @@ const commentSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        // required: true
+        required: true
     },
     onModel: {
         type: String,
-        // required: true,
+        required: true,
         enum: ['Tweet', 'Comment']
     },
     commentable: {
         type: mongoose.Schema.Types.ObjectId,
-        // required: true,
+        required: true,
         refPath: 'onModel'
     },
     comments: [

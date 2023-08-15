@@ -1,46 +1,39 @@
-import { LikeRespository, TweetRepository } from '../repository/index.js';
-import Tweet from '../models/tweet.js';
+import { TweetRepository, HashtagRepository } from '../repository/index.js'
 
-class LikeService {
+class TweetService {
     constructor() {
-        this.likeRepository = new LikeRespository();
         this.tweetRepository = new TweetRepository();
+        this.hashtagRepository = new HashtagRepository();
     }
 
-    async toggleLike(modelId, modelType, userId) { // /api/v1/likes/toggle?id=modelid&type=Tweet
-        console.log(modelId, modelType, userId);
-        if(modelType == 'Tweet') {
-            var likeable = await this.tweetRepository.find(modelId)
-        } else if(modelType == 'Comment') {
-            // TODO
-        } else {
-            throw new Error('unknown model type');
-        }
-        const exists = await this.likeRepository.findByUserAndLikeable({
-            user: userId,
-            onModel: modelType,
-            likeable: modelId
+    async create(data) {
+        console.log(data);
+        const content = data.content;
+        const tags = content.match(/#[a-zA-Z0-9_]+/g)
+                        .map((tag) => tag.substring(1).toLowerCase()); // this regex extracts hashtags
+        const tweet = await this.tweetRepository.create(data);
+        let alreadyPresentTags = await this.hashtagRepository.findByName(tags);
+        let titleOfPresenttags = alreadyPresentTags.map(tags => tags.title);
+        let newTags = tags.filter(tag => !titleOfPresenttags.includes(tag));
+        newTags = newTags.map(tag => {
+            return {title: tag, tweets: [tweet.id]}
         });
-        console.log("exists", exists);
-        if(exists) {
-            likeable.likes.pull(exists.id);
-            await likeable.save();
-            await exists.deleteOne();
-            var isAdded = false;
+        await this.hashtagRepository.bulkCreate(newTags);
+        alreadyPresentTags.forEach((tag) => {
+            tag.tweets.push(tweet.id);
+            tag.save();
+        });
+        return tweet;
+    }
 
-        } else {
-            const newLike = await this.likeRepository.create({
-                user: userId,
-                onModel: modelType,
-                likeable: modelId
-            });
-            likeable.likes.push(newLike);
-            await likeable.save();
-
-            var isAdded = true;
-        }
-        return isAdded;
-    }   
+    async get(tweetId) {
+        const tweet = await this.tweetRepository.getWithComments(tweetId);
+        return tweet;
+    }
 }
 
-export default LikeService;
+export default TweetService;
+
+/*
+    this is my #first #tweet . I am really #excited
+*/

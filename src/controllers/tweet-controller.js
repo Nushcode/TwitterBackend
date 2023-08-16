@@ -20,8 +20,6 @@ export const createTweet = async (req, res) => {
         });
     }
 };
-
-
 export const  getTweet =  async ( req, res)  => {
     try {
         const response = await tweetService.get(req.params.id);  

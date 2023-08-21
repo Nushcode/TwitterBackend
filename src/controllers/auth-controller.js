@@ -1,5 +1,6 @@
 import UserService from "../services/user-service.js";
 
+
 const userService = new UserService();
 
 export const signup = async (req, res) => {
@@ -36,7 +37,7 @@ export const login = async (req, res) => {
         })
     } catch(error) {
         return res.status(500).json({
-            message: 'Something went wrong',
+            message: 'Something went wrong in login',
             data: {},
             success: false,
             err: error
